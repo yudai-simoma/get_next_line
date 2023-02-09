@@ -6,7 +6,7 @@
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:33:37 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/07 19:21:52 by yshimoma         ###   ########.fr       */
+/*   Updated: 2023/02/09 20:29:48 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,15 @@ typedef struct s_file
 	char	*backup;
 }	t_file;
 
-typedef struct s_count
-{
-	size_t	i;
-	size_t	j;
-	size_t	k;
-	size_t	l;
-}	t_count;
+char	*get_next_line(int fd);
+int		ft_whil_loop(int fd, int bytes, t_file *file);
+int		ft_buf_add_line(t_file *file);
+int		ft_buf_add_save_line(t_file *file);
+int		ft_save_add_line(t_file *file);
+char	*ft_add_str(const char *s1, const char *s2, int x);
+char	*ft_strchr(const char *s, int c);
+size_t	ft_strlen(const char *s);
+char	*ft_strdup(const char *src);
+char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif
