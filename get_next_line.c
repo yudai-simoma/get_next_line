@@ -1,52 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/09 20:24:41 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/14 16:48:59 by yshimoma         ###   ########.fr       */
+/*   Created: 2023/02/14 12:22:58 by yshimoma          #+#    #+#             */
+/*   Updated: 2023/02/14 18:33:28 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-/*
- * 各文字列を条件に分けて新たな文字列へ格納した値を返す
- * x = 0 の時は、line_new(lineにbufの改行までを新規に追加する)
- * x = 1 の時は、save_new(saveにbufの改行後を新規に追加する)
- * x = 2 の時は、line_add(lineに元の文字列とbufの改行までを結合する)
- * x = 3 の時は、line_new(lineに全てのbufを新規に追加する)
- */
-char	*ft_add_str(const char *s1, const char *s2, int x)
-{
-	char	*return_str;
-	size_t	i;
-
-	if (x == 1)
-		s1 = ft_strchr(s1, '\n');
-	if (x == 1 || x == 0 || x == 3 || s1 + 1 != '\0')
-	{
-		return_str = ft_strdup(s1 + x);
-		if (return_str == NULL)
-			return (NULL);
-	}
-	if (x == 0)
-	{
-		i = 0;
-		while (return_str[i] != '\n' && return_str[i] != '\0')
-			i++;
-		return_str[i + 1] = '\0';
-	}
-	if (x == 2)
-	{
-		return_str = ft_strjoin(s1, ft_add_str(s2, NULL, 0));
-		if (return_str == NULL)
-			return (NULL);
-	}
-	return (return_str);
-}
 
 /*
 ** 文字列の先頭から「文字」を検索して見つかった場所をポインタで返します。
@@ -75,6 +39,33 @@ size_t	ft_strlen(const char *s)
 	while (s[i] != '\0')
 		i++;
 	return (i);
+}
+
+/*
+ * s文字列の中で、startから最大len分文字を抽出し、戻り値として返す。
+ "abcdefghijklmn",3,20    defg
+ */
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*return_str;
+	size_t	malloc_size;
+	size_t	i;
+
+	if (ft_strlen(s) <= len)
+		malloc_size = ft_strlen(s) - (size_t)start;
+	else
+		malloc_size = len;
+	return_str = (char *)malloc(sizeof(char) * (malloc_size + 1));
+	if (return_str == NULL)
+		return (NULL);
+	i = 0;
+	while (i < malloc_size)
+	{
+		return_str[i] = s[start + i];
+		i++;
+	}
+	return_str[i] = '\0';
+	return (return_str);
 }
 
 /*
@@ -125,3 +116,62 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return_src[i] = '\0';
 	return (return_src);
 }
+
+char	*get_next_line(int fd)
+{
+	int			bytes;
+	static char	buf[BUFFER_SIZE + 1];
+	// static char	buf[(size_t)BUFFER_SIZE + 1];
+
+	//bufに値があった場合、以下を処理
+	//bufに改行があれば、lineに改行までを入れて出力、bufの改行後を先頭に移動させる
+	// return
+	//bufに改行が無ければ、lineにbufの全てを入れ、readする
+	//read
+	
+
+
+
+}
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <string.h>
+int	main(void)
+{
+	int		fd;
+	char	*map_file_str;
+
+	// fd = open("unit-test1/files/nl", O_RDONLY);
+	// fd = open("unit-test1/files/empty", O_RDONLY);
+	fd = open("test.txt", O_RDONLY);
+	// fd = 0;
+	while (1)
+	{
+		map_file_str = get_next_line(fd);
+		if (map_file_str == NULL)
+			break ;
+		// printf("len: %lu", strlen(map_file_str));
+		printf("> %s", map_file_str);
+		free(map_file_str);
+	}
+	return (0);
+}
+
+// #include <stdio.h>
+// #include <fcntl.h>
+// int	main(int argc, char **argv)
+// {
+// 	int		fd;
+// 	char	*map_file_str;
+
+// 	fd = open(argv[1], O_RDONLY);
+// 	while (1)
+// 	{
+// 		map_file_str = get_next_line(fd);
+// 		if (map_file_str == NULL)
+// 			break ;
+// 		printf("%s", map_file_str);
+// 	}
+// 	return (0);
+// }
