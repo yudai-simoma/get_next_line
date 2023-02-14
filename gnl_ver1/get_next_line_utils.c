@@ -6,7 +6,7 @@
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 20:24:41 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/09 20:25:43 by yshimoma         ###   ########.fr       */
+/*   Updated: 2023/02/13 21:11:55 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
  * x = 0 の時は、line_new(lineにbufの改行までを新規に追加する)
  * x = 1 の時は、save_new(saveにbufの改行後を新規に追加する)
  * x = 2 の時は、line_add(lineに元の文字列とbufの改行までを結合する)
+ * x = 3 の時は、line_new(lineに全てのbufを新規に追加する)
  */
 char	*ft_add_str(const char *s1, const char *s2, int x)
 {
@@ -25,7 +26,7 @@ char	*ft_add_str(const char *s1, const char *s2, int x)
 
 	if (x == 1)
 		s1 = ft_strchr(s1, '\n');
-	if (x == 1 || x == 0)
+	if (x == 1 || x == 0 || x == 3 || s1 + 1 != '\0')
 	{
 		return_str = ft_strdup(s1 + x);
 		if (return_str == NULL)
