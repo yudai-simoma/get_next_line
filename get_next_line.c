@@ -6,7 +6,7 @@
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 12:22:58 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/14 18:33:28 by yshimoma         ###   ########.fr       */
+/*   Updated: 2023/02/14 19:40:20 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,21 +117,105 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (return_src);
 }
 
+/*
+** 指定バイト数分のメモリをコピーする関数です。
+*/
+void	*ft_memcpy(void *dst, const void *src, size_t n)
+{
+	unsigned char		*cp_dst;
+	const unsigned char	*cp_src;
+	size_t				i;
+
+	if ((dst == src) || (n == 0))
+		return (dst);
+	cp_dst = (unsigned char *)dst;
+	cp_src = (const unsigned char *)src;
+	i = 0;
+	while (i < n)
+	{
+		cp_dst[i] = cp_src[i];
+		i++;
+	}
+	return (dst);
+}
+
+/*
+** 指定したバイト数のメモリをコピー(移動)する関数です。
+*/
+void	*ft_memmove(void *dst, const void *src, size_t len)
+{
+	unsigned char		*cp_dst;
+	const unsigned char	*cp_src;
+
+	if (dst == src)
+		return (NULL);
+	cp_dst = (unsigned char *)dst;
+	cp_src = (const unsigned char *)src;
+	if (dst > src)
+	{
+		while (len)
+		{
+			cp_dst[len - 1] = cp_src[len - 1];
+			len--;
+		}
+	}
+	else
+		return (ft_memcpy(cp_dst, cp_src, len));
+	return (dst);
+}
+
+//bufに改行があれば、lineに改行までを入れて出力、bufの改行後を先頭に移動させる
+char	*ft_buf_in_line(char *buf, char *return_str)
+{
+	char	*cp_str;
+	size_t	i;
+
+	i = 0;
+	while (buf[i] != '\n')
+		i++;
+	if (return_str != NULL)
+	{
+		cp_str = return_str;
+		free(return_str);
+		return_str = NULL;
+		return_str = ft_strjoin(cp_str, ft_substr(buf, 0, i + 1));
+	}
+	else
+	{
+		return_str = ft_strdup(ft_substr(buf, 0, i + 1));
+	}
+	// bufの改行後を先頭に移動させる
+	buf = ft_memmove(buf, &buf[i + 1], ft_strlen(buf) - (i + 1));
+	return (return_str);
+}
+
 char	*get_next_line(int fd)
 {
 	int			bytes;
 	static char	buf[BUFFER_SIZE + 1];
-	// static char	buf[(size_t)BUFFER_SIZE + 1];
+	char		*return_str;
 
-	//bufに値があった場合、以下を処理
-	//bufに改行があれば、lineに改行までを入れて出力、bufの改行後を先頭に移動させる
-	// return
-	//bufに改行が無ければ、lineにbufの全てを入れ、readする
-	//read
-	
-
-
-
+	while (1)
+	{
+		//bufに値があった場合、以下を処理
+		if (buf[0] != '\0')
+		{
+			//bufに改行があれば、lineに改行までを入れて出力、bufの改行後を先頭に移動させる
+			if (ft_strchr(buf, '\n') != NULL)
+			{
+				return_str = ft_buf_in_line(buf, return_str);
+				return (return_str);
+			}
+			//bufに改行が無ければ、lineにbufの全てを入れ、readする
+			else
+			{
+				return_str = ft_strdup(buf);
+			}
+		}
+		bytes = read(fd, buf, BUFFER_SIZE);
+		if (bytes <= 0)
+			return (return_str);
+	}
 }
 
 #include <stdio.h>
