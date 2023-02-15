@@ -6,7 +6,7 @@
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 12:22:58 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/14 19:40:20 by yshimoma         ###   ########.fr       */
+/*   Updated: 2023/02/15 21:27:01 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,19 +173,28 @@ char	*ft_buf_in_line(char *buf, char *return_str)
 	i = 0;
 	while (buf[i] != '\n')
 		i++;
+	i++;
 	if (return_str != NULL)
 	{
 		cp_str = return_str;
-		free(return_str);
-		return_str = NULL;
-		return_str = ft_strjoin(cp_str, ft_substr(buf, 0, i + 1));
+		return_str = ft_strjoin(return_str, buf);
+		//return_strから改行の後ろを０埋め
+		return_str[ft_strlen(cp_str) + i] = '\0';
+		free(cp_str);
 	}
 	else
 	{
-		return_str = ft_strdup(ft_substr(buf, 0, i + 1));
+		return_str = ft_strdup(buf);
+		return_str[i] = '\0';
 	}
 	// bufの改行後を先頭に移動させる
-	buf = ft_memmove(buf, &buf[i + 1], ft_strlen(buf) - (i + 1));
+	if (buf[i] != '\0')
+	{
+		ft_memmove(buf, &buf[i], ft_strlen(buf) - i);
+		buf[ft_strlen(buf) - i] = '\0';
+	}
+	else
+		buf[0] = '\0';
 	return (return_str);
 }
 
@@ -194,7 +203,9 @@ char	*get_next_line(int fd)
 	int			bytes;
 	static char	buf[BUFFER_SIZE + 1];
 	char		*return_str;
+	char		*cp_str;
 
+	return_str = NULL;
 	while (1)
 	{
 		//bufに値があった場合、以下を処理
@@ -209,12 +220,23 @@ char	*get_next_line(int fd)
 			//bufに改行が無ければ、lineにbufの全てを入れ、readする
 			else
 			{
-				return_str = ft_strdup(buf);
+				if (return_str == NULL)
+					return_str = ft_strdup(buf);
+				else
+				{
+					cp_str = return_str;
+					return_str = ft_strjoin(return_str, buf);
+					free(cp_str);
+				}
 			}
 		}
 		bytes = read(fd, buf, BUFFER_SIZE);
 		if (bytes <= 0)
+		{
+			buf[0] = '\0';
 			return (return_str);
+		}
+		buf[bytes] = '\0';
 	}
 }
 
@@ -239,6 +261,7 @@ int	main(void)
 		printf("> %s", map_file_str);
 		free(map_file_str);
 	}
+	system("leaks a.out");
 	return (0);
 }
 
