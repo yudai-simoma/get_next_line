@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/14 12:22:58 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/16 19:57:54 by yshimoma         ###   ########.fr       */
+/*   Created: 2023/02/16 19:55:22 by yshimoma          #+#    #+#             */
+/*   Updated: 2023/02/16 20:09:28 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 /*
 ** 文字列の先頭から「文字」を検索して見つかった場所をポインタで返します。
@@ -127,66 +127,43 @@ static int	ft_while_loop(char *buf, char **return_str)
 char	*get_next_line(int fd)
 {
 	int			bytes;
-	static char	buf[BUFFER_SIZE + 1];
+	static char	buf[OPEN_MAX + 1][BUFFER_SIZE + 1];
 	char		*return_str;
 
-	if (fd < 0 || BUFFER_SIZE < 0)
+	if (fd >= OPEN_MAX + 1 || fd < 0 || BUFFER_SIZE < 0)
 		return (NULL);
 	return_str = NULL;
 	while (1)
 	{
-		if (buf[0] != '\0')
-			if (ft_while_loop(buf, &return_str))
+		if (buf[fd][0] != '\0')
+			if (ft_while_loop(buf[fd], &return_str))
 				return (return_str);
-		bytes = read(fd, buf, BUFFER_SIZE);
+		bytes = read(fd, buf[fd], BUFFER_SIZE);
 		if (bytes <= 0)
 		{
-			buf[0] = '\0';
+			buf[fd][0] = '\0';
 			return (return_str);
 		}
-		buf[bytes] = '\0';
+		buf[fd][bytes] = '\0';
 	}
 }
 
 // #include <stdio.h>
 // #include <fcntl.h>
 // #include <string.h>
-// int	main(void)
+// int main(void)
 // {
-// 	int		fd;
-// 	char	*map_file_str;
+// 	int	fd;
+// 	int fd1;
 
-// 	// fd = open("unit-test1/files/nl", O_RDONLY);
-// 	// fd = open("unit-test1/files/41_no_nl", O_RDONLY);
-// 	fd = open("test.txt", O_RDONLY);
-// 	fd = 0;
-// 	while (1)
-// 	{
-// 		map_file_str = get_next_line(fd);
-// 		if (map_file_str == NULL)
-// 			break ;
-// 		// printf("len: %lu", strlen(map_file_str));
-// 		printf("> %s", map_file_str);
-// 		free(map_file_str);
-// 	}
-// 	// system("leaks a.out");
-// 	return (0);
-// }
+// 	fd = open("./test.txt",O_RDONLY);
+// 	fd1 = open("./test2.txt",O_RDONLY);
 
-// #include <stdio.h>
-// #include <fcntl.h>
-// int	main(int argc, char **argv)
-// {
-// 	int		fd;
-// 	char	*map_file_str;
+// 	printf("%s",get_next_line(fd));
+// 	printf("%s",get_next_line(fd1));
 
-// 	fd = open(argv[1], O_RDONLY);
-// 	while (1)
-// 	{
-// 		map_file_str = get_next_line(fd);
-// 		if (map_file_str == NULL)
-// 			break ;
-// 		printf("%s", map_file_str);
-// 	}
-// 	return (0);
+// 	// printf("");
+// 	puts("\n\n\n----------------------------\n\n\n");
+// 	printf("%s",get_next_line(fd));
+// 	printf("%s",get_next_line(fd1));
 // }
