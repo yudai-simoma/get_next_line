@@ -6,7 +6,7 @@
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 12:22:58 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/16 19:57:54 by yshimoma         ###   ########.fr       */
+/*   Updated: 2023/02/16 21:12:50 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ static char	*ft_add_str(char *buf, char *return_str, size_t l_num)
 	{
 		cp_str = return_str;
 		return_str = ft_strjoin(return_str, buf);
+		free(cp_str);
 		if (return_str == NULL)
 			return (NULL);
 		return_str[ft_strlen(cp_str) + l_num] = '\0';
-		free(cp_str);
 	}
 	else
 	{
@@ -105,9 +105,9 @@ static int	ft_while_loop(char *buf, char **return_str)
 		{
 			cp_str = *return_str;
 			*return_str = ft_strjoin(*return_str, buf);
+			free(cp_str);
 			if (*return_str == NULL)
 				return (1);
-			free(cp_str);
 		}
 		else
 		{
@@ -135,9 +135,8 @@ char	*get_next_line(int fd)
 	return_str = NULL;
 	while (1)
 	{
-		if (buf[0] != '\0')
-			if (ft_while_loop(buf, &return_str))
-				return (return_str);
+		if ((buf[0] != '\0') && ft_while_loop(buf, &return_str))
+			return (return_str);
 		bytes = read(fd, buf, BUFFER_SIZE);
 		if (bytes <= 0)
 		{
