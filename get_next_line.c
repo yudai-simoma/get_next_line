@@ -6,7 +6,7 @@
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 12:22:58 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/16 21:12:50 by yshimoma         ###   ########.fr       */
+/*   Updated: 2023/02/16 21:41:10 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,13 @@ static char	*ft_add_str(char *buf, char *return_str, size_t l_num)
 	{
 		cp_str = return_str;
 		return_str = ft_strjoin(return_str, buf);
-		free(cp_str);
 		if (return_str == NULL)
+		{
+			free(cp_str);
 			return (NULL);
+		}
 		return_str[ft_strlen(cp_str) + l_num] = '\0';
+		free(cp_str);
 	}
 	else
 	{
