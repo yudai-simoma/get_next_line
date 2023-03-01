@@ -6,7 +6,7 @@
 /*   By: yshimoma <yshimoma@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 12:22:58 by yshimoma          #+#    #+#             */
-/*   Updated: 2023/02/19 10:45:28 by yshimoma         ###   ########.fr       */
+/*   Updated: 2023/03/01 21:45:40 by yshimoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,25 +135,24 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE < 0 || BUFFER_SIZE > SIZE_MAX)
 		return (NULL);
-	return_str = NULL;
 	while (1)
 	{
 		if ((buf[0] != '\0') && set_str(buf, &return_str))
 			return (return_str);
 		bytes = read(fd, buf, BUFFER_SIZE);
-		if (bytes == 0)
+		if (bytes <= 0)
 		{
+			if (bytes < 0)
+			{
+				free (return_str);
+				return_str = NULL;
+			}
 			buf[0] = '\0';
 			return (return_str);
 		}
-		if (bytes < 0)
-		{
-			free (return_str);
-			return_str = NULL;
-			return (NULL);
-		}
-		buf[bytes] = '\0';
+		buf[fd][bytes] = '\0';
 	}
+	return_str = NULL;
 }
 
 // #include <stdio.h>
